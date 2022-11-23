@@ -6,12 +6,19 @@ class threeway:
         self.s = socket
 
     def three_way_handshake(self):
-        self.s.listen(1)
-        self.conn, self.addr = self.s.accept()
-        print("connexion établie avec", self.addr)
-        self.conn.send("SYN".encode())
+        
+        message  = self.s.rcvfrom(1024)
+        addr  = message[1]
+        message = message[0]
+        print("connexion établie avec", addr)
+        
+        self.s.sendto("SYN".encode())
         print("SYN envoyé")
-        self.conn.recv(1024)
+        
+        message = self.s.rcvrfrom(1024)
+        message = message[0]
+        print(message)
         print("SYN-ACK reçu")
-        self.conn.send("ACK".encode())
+        
+        self.s.sendto("ACK".encode())
         print("ACK envoyé")
