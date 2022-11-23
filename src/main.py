@@ -21,7 +21,6 @@ if __name__ == '__main__':
         exit(1)
     
     print(f'{" Start of the TCP over UDP server on port  %d "%port:=^80}\n')
-    print(f'{" Creation of the socket ":=^80}\n')
 
     try:
         three_way_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,16 +31,9 @@ if __name__ == '__main__':
         exit(1)
     
     while True:
+        print(f'{" Creation of the socket ":=^80}\n')
         thr = threeway(three_way_socket, port)
-        new_port : int = thr.run()
-        
-        try:
-            comm_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            comm_socket.bind(("", new_port))
-        except socket.error as e:
-            print(f'{"Error while creating the socket"}\n')
-            print(e)
-            exit(1)
+        comm_socket : socket.socket = thr.run()
         
         sndf = sendfile(comm_socket)
         t1 = threading.Thread(target=sndf.run)

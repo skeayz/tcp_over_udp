@@ -8,7 +8,7 @@ class threeway:
         self.s = socket
         self.current_port = current_port
 
-    def run(self) -> int:
+    def run(self) -> socket.socket:
     
         data, addr  = self.s.recvfrom(1024)
         if(custom_decode(data) != 'SYN'):
@@ -17,6 +17,13 @@ class threeway:
         
         # Create new random port greater than current port but inferior to 9999
         new_port = self.current_port + random.randint(1, 9999 - self.current_port)
+        try:
+            comm_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            comm_socket.bind(("", new_port))
+        except socket.error as e:
+            print(f'{"Error while creating the socket"}\n')
+            print(e)
+            exit(1)
         #Create the Syn-ACk message including the new port
         synack = f"SYN-ACK{str(new_port).zfill(4)}"
         
@@ -28,4 +35,4 @@ class threeway:
             raise Exception("ACK not received")
         print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
         
-        return new_port
+        return comm_socket
