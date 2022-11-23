@@ -9,7 +9,7 @@ class threeway:
         self.current_port = current_port
 
     def run(self) -> int:
-        
+    
         data, addr  = self.s.recvfrom(1024)
         if(custom_decode(data) != 'SYN'):
             raise Exception("SYN not received")

@@ -1,5 +1,6 @@
 import sys
 import socket
+import threading
 
 from threeway import *
 from utils import *
@@ -29,20 +30,22 @@ if __name__ == '__main__':
         print(f'{"Error while creating the socket"}\n')
         print(e)
         exit(1)
+    
+    while True:
+        thr = threeway(three_way_socket, port)
+        new_port : int = thr.run()
         
-    thr = threeway(three_way_socket, port)
-    
-    new_port : int = thr.run()
-    
-    try:
-        comm_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        comm_socket.bind(("", new_port))
-    except socket.error as e:
-        print(f'{"Error while creating the socket"}\n')
-        print(e)
-        exit(1)
-    
-    sndf = sendfile(comm_socket)
+        try:
+            comm_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            comm_socket.bind(("", new_port))
+        except socket.error as e:
+            print(f'{"Error while creating the socket"}\n')
+            print(e)
+            exit(1)
+        
+        sndf = sendfile(comm_socket)
+        t1 = threading.Thread(target=sndf.run)
+        t1.start()
     
     
     
