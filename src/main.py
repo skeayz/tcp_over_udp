@@ -2,9 +2,12 @@ import sys
 import socket
 
 from threeway import *
+from utils import *
+from sendfile import *
 
 port : int
 three_way_socket : socket.socket
+comm_socket : socket.socket
 
 if __name__ == '__main__':
     if(len(sys.argv) != 2):
@@ -27,7 +30,19 @@ if __name__ == '__main__':
         print(e)
         exit(1)
         
-    threeway = threeway(three_way_socket, port)
+    thr = threeway(three_way_socket, port)
     
-    new_port : int = threeway.run()
+    new_port : int = thr.run()
+    
+    try:
+        comm_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        comm_socket.bind(("", new_port))
+    except socket.error as e:
+        print(f'{"Error while creating the socket"}\n')
+        print(e)
+        exit(1)
+    
+    sndf = sendfile(comm_socket)
+    
+    
     
