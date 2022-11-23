@@ -4,7 +4,7 @@ import socket
 from threeway import *
 
 port : int
-s : socket.socket
+three_way_socket : socket.socket
 
 if __name__ == '__main__':
     if(len(sys.argv) != 2):
@@ -20,14 +20,14 @@ if __name__ == '__main__':
     print(f'{" Creation of the socket ":=^80}\n')
 
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind(("", port))
+        three_way_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        three_way_socket.bind(("", port))
     except socket.error as e:
         print(f'{"Error while creating the socket"}\n')
         print(e)
         exit(1)
         
-    threeway = threeway(s, port)
+    threeway = threeway(three_way_socket, port)
     
     new_port : int = threeway.run()
     

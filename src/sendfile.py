@@ -1,6 +1,7 @@
+import socket
 class sendfile:
     
-    def __init__(self, socket):
+    def __init__(self, socket: socket.socket):
         self.s = socket
         
     def send_file(self, file):
