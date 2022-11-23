@@ -12,7 +12,7 @@ class threeway:
         data, addr  = self.s.recvfrom(1024)
         if(custom_decode(data) != 'SYN'):
             raise Exception("SYN not received")
-        print(f'[+] Reiceved : {custom_decode(data)} from {addr}\n')
+        print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
         
         # Create new random port greater than current port but inferior to 9999
         new_port = self.current_port + random.randint(1, 9999 - self.current_port)
@@ -20,12 +20,12 @@ class threeway:
         synack = f"SYN-ACK{str(new_port).zfill(4)}"
         
         self.s.sendto(synack.encode(), addr)
-        print(f'[+] Sent : {synack} to {addr}\n')
+        print(f'[+] Sent : {synack} to {addr}')
         
         data, addr = self.s.recvfrom(1024)
         if(custom_decode(data) != "ACK"):
             raise Exception("ACK not received")
-        print(f'[+] Reiceved : {custom_decode(data)} from {addr}\n')
+        print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
         
         return new_port
 
