@@ -1,5 +1,6 @@
 import socket
 import random
+from utils import *
 
 class threeway:
 
@@ -19,7 +20,7 @@ class threeway:
         #Create the Syn-ACk message including the new port
         synack = f"SYN-ACK{str(new_port).zfill(4)}"
         
-        self.s.sendto(synack.encode(), addr)
+        self.s.sendto(custom_encode(synack), addr)
         print(f'[+] Sent : {synack} to {addr}')
         
         data, addr = self.s.recvfrom(1024)
@@ -28,6 +29,3 @@ class threeway:
         print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
         
         return new_port
-
-def custom_decode(data : bytes) -> str:
-    return data.replace(b'\x00', b'').decode()
