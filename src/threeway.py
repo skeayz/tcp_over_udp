@@ -2,7 +2,7 @@ import socket
 
 class threeway:
 
-    def __init__(self, socket):
+    def __init__(self, socket : socket.socket):
         self.s = socket
 
     def three_way_handshake(self):
@@ -15,7 +15,7 @@ class threeway:
         self.s.sendto("SYN".encode())
         print("SYN envoyé")
         
-        message = self.s.recvrfrom(1024)
+        message = self.s.recvfrom(1024)
         message = message[0]
         print(message)
         print("SYN-ACK reçu")
