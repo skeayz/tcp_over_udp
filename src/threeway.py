@@ -7,7 +7,7 @@ class threeway:
 
     def three_way_handshake(self):
         
-        message  = self.s.rcvfrom(1024)
+        message  = self.s.recvfrom(1024)
         addr  = message[1]
         message = message[0]
         print("connexion établie avec", addr)
@@ -15,7 +15,7 @@ class threeway:
         self.s.sendto("SYN".encode())
         print("SYN envoyé")
         
-        message = self.s.rcvrfrom(1024)
+        message = self.s.recvrfrom(1024)
         message = message[0]
         print(message)
         print("SYN-ACK reçu")
