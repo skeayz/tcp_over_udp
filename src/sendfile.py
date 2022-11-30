@@ -11,17 +11,18 @@ class sendfile:
     seq = 1
     transfer = True
     final_ack=0
+    rtt = 0.0
 
     def __init__(self, socket: socket.socket, rtt: float):
         self.s = socket
-        print("new rtt : ", round(rtt * 1.3, 4))
+        self.rtt = round(rtt * 1.3, 4)
         self.s.settimeout(round(rtt * 1.3, 4))
 
-    def receive(self, socket: socket.socket):
+    def receive(self):
         while True:
             # flush the buffer
             try:
-                data, addr = socket.recvfrom(1024)
+                data, addr = self.s.recvfrom(1024)
                 print(f'\t[+] Reiceved : {custom_decode(data)} from {addr}')
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
@@ -38,6 +39,7 @@ class sendfile:
                 if (ack == self.lastAck and self.duplicates < 2):
                     self.duplicates += 1
                 elif (ack == self.lastAck and self.duplicates >= 2):
+                    print("DUPLICATES")
                     self.seq = self.lastAck
                     self.lastAck = self.lastAck-1
                     self.duplicates = 0
@@ -58,7 +60,7 @@ class sendfile:
             raise Exception("File not found")
         f.seek(0, os.SEEK_END)
         self.final_ack = int(f.tell()/1018) + 1
-        th1 = threading.Thread(target=self.receive, args=(self.s,))
+        th1 = threading.Thread(target=self.receive)
         th1.start()
         time_window: list(tuple) = []
         # start timer
@@ -70,6 +72,7 @@ class sendfile:
                 data = f.read(1018)
                 if(data):
                     self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
+                    self.s.settimeout(round(self.s.gettimeout(), 4))
                     print(
                         f'\t[+] Sent : {str(self.seq).zfill(6)} to {addr} with window size {self.window_size}')
                     time_window.append((datetime.datetime.now().timestamp() - start, self.window_size))
