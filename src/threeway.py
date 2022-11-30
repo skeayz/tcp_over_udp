@@ -35,11 +35,10 @@ class threeway:
         data, addr = self.s.recvfrom(1024)
         ending_time = time.time()
         
-        rtt = str(ending_time - initial_time)
-        print(rtt)
+        rtt = float(ending_time - initial_time)
         
         if(custom_decode(data) != "ACK"):
             raise Exception("ACK not received")
         print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
         
-        return comm_socket
+        return (comm_socket, rtt)

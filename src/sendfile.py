@@ -10,12 +10,13 @@ class sendfile:
     seq = 1
     transfer = True
 
-    def __init__(self, socket: socket.socket):
+    def __init__(self, socket: socket.socket, rtt: float):
         self.s = socket
-        self.s.settimeout(0.2)
+        print("new rtt : ", round(rtt * 1.3, 4))
+        self.s.settimeout(round(rtt * 1.3, 4))
 
     def receive(self, socket: socket.socket):
-        while self.transfer:
+        while True:
             # flush the buffer
             try:
                 data, addr = socket.recvfrom(1024)
@@ -29,10 +30,11 @@ class sendfile:
                 if (ack == self.lastAck and self.duplicates < 2):
                     self.duplicates += 1
                 elif (ack == self.lastAck and self.duplicates >= 2):
-                    self.seq = self.lastAck-1
+                    self.seq = self.lastAck
                     self.lastAck = self.lastAck-1
                     self.duplicates = 0
                     self.window_size = 1
+                
             except TimeoutError as err:
                 print(f'[-] Timeout')
                 self.seq -= 1
@@ -64,15 +66,14 @@ class sendfile:
                     time_window.append((datetime.datetime.now().timestamp() - start, self.window_size))
                     self.seq += 1
                 else:
-                    f.close()
-                    print(f'{" End of the file transfer ":=^80}\n')
-                    # stop timer
-                    duration = datetime.datetime.now().timestamp() - start
-                    print(f'Duration : {duration}')
                     self.transfer = False
+                    self.s.sendto(custom_encode("FIN"), addr)
+                    print(f'\t[+] Sent : FIN to {addr}')
                     break
                 self.window_size -= 1
         # print time_winfow into a file
+        th1.join()
         with open('time_window.txt', 'w') as f:
             for time, window_size in time_window:
-                f.write(f'{time} {window_size}\n')       
+                f.write(f'{time} {window_size}\n')    
+        exit(0)   

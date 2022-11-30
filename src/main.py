@@ -33,9 +33,8 @@ if __name__ == '__main__':
     while True:
         print(f'{" Creation of the socket ":=^80}\n')
         thr = threeway(three_way_socket, port)
-        comm_socket : socket.socket = thr.run()
-        
-        sndf = sendfile(comm_socket)
+        comm_socket, rtt = thr.run()
+        sndf = sendfile(comm_socket, rtt)
         t1 = threading.Thread(target=sndf.run)
         t1.start()
     
