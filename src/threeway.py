@@ -1,5 +1,6 @@
 import socket
 import random
+import time
 from utils import *
 
 class threeway:
@@ -27,10 +28,16 @@ class threeway:
         #Create the Syn-ACk message including the new port
         synack = f"SYN-ACK{str(new_port).zfill(4)}"
         
+        initial_time = time.time()
         self.s.sendto(custom_encode(synack), addr)
         print(f'[+] Sent : {synack} to {addr}')
         
         data, addr = self.s.recvfrom(1024)
+        ending_time = time.time()
+        
+        rtt = str(ending_time - initial_time)
+        print(rtt)
+        
         if(custom_decode(data) != "ACK"):
             raise Exception("ACK not received")
         print(f'[+] Reiceved : {custom_decode(data)} from {addr}')
