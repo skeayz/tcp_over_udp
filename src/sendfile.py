@@ -14,6 +14,7 @@ class sendfile:
     final_ack=0
     rtt = 0.0
     lock = threading.Lock()
+    buffersize = 1494
 
     def __init__(self, socket: socket.socket, rtt: float):
         self.s = socket
@@ -66,7 +67,7 @@ class sendfile:
         except FileNotFoundError:
             raise Exception("File not found")
         f.seek(0, os.SEEK_END)
-        self.final_ack = math.ceil(f.tell()/1018)
+        self.final_ack = math.ceil(f.tell()/self.buffersize)
         th1 = threading.Thread(target=self.receive)
         th1.start()
         time_window: list(tuple) = []
@@ -76,8 +77,8 @@ class sendfile:
         while self.transfer:
             while self.window_size > 0:
                 with self.lock:
-                    f.seek((self.seq-1)*1018)
-                    data = f.read(1018)
+                    f.seek((self.seq-1)*self.buffersize)
+                    data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
                     self.s.settimeout(round(self.s.gettimeout(), 4))
