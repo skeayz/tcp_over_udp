@@ -14,7 +14,7 @@ if __name__ == "__main__":
         x = x[::]
         y = y[::]
         
-        plt.plot(x, y, linewidth=0.5)
+        plt.plot(x, y, linewidth=1, marker='o', markersize=1)
         plt.xlim(0, 0.2)
         plt.xlabel('Time (s)')
         plt.ylabel('Window size')
