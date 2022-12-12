@@ -32,7 +32,7 @@ class sendfile:
             time_window.append((datetime.datetime.now().timestamp() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1024)
-                print(f'\t[+] Reiceved : {custom_decode(data)} from {addr}')
+                print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
                 if(ack > self.lastAck and self.threshold > self.window_size):
@@ -64,7 +64,7 @@ class sendfile:
                 
                 
             except socket.error as err:
-                print(f'[-] Timeout')
+                print('[-] Timeout')
                 with self.lock:
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     self.window_size = self.window_size // 2 if self.window_size > 1 else 1
@@ -72,7 +72,7 @@ class sendfile:
                     
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
-        print(f'\t[+] Sent : FIN to {addr}')
+        print('[+] Sent : FIN to' + str(addr))
         self.window_size = 0
         self.transfer = False
         with open('time_window.txt', 'w') as f:
@@ -80,9 +80,9 @@ class sendfile:
                 f.write(f'{time} {window_size}\n') 
 
     def run(self):
-        print(f'\t\n{" Start of the file transfer ":=^80}\n')
+        print(" Start of the file transfer ")
         data, addr = self.s.recvfrom(1024)
-        print(f'\t[+] Reiceved : {custom_decode(data)} from {addr}')
+        print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
         try:
             f = open(custom_decode(data), 'rb')
         except FileNotFoundError:
@@ -101,8 +101,7 @@ class sendfile:
                 if(data):
                     self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
                     self.s.settimeout(round(self.s.gettimeout(), 4))
-                    print(
-                        f'\t[+] Sent : {str(self.seq).zfill(6)} to {addr} with window size {self.window_size}')
+                    print('[+] Sent : '+str(self.seq).zfill(6)+' to '+str(addr)+' with window size' + str(self.window_size))
                     with self.lock:
                         self.seq += 1
                     with self.lock:
