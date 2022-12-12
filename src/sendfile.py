@@ -18,14 +18,14 @@ class sendfile:
     buffersize = 1494
     threshold = 30
 
-    def __init__(self, socket: socket.socket, rtt: float):
+    def __init__(self, socket, rtt):
         self.s = socket
         self.rtt = round(rtt * 1.3, 4)
         self.s.settimeout(round(rtt * 5, 4))
 
     def receive(self):
         ack = -1
-        time_window: list(tuple) = []
+        time_window = []
         start = datetime.datetime.now().timestamp()
         while ack != self.final_ack:
             # flush the buffer
