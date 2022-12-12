@@ -35,11 +35,18 @@ class sendfile:
                 print(f'\t[+] Reiceved : {custom_decode(data)} from {addr}')
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
-                if(ack > self.lastAck):
+                if(ack > self.lastAck and self.threshold > self.window_size):
                     with self.lock:
-                        # self.window_size += (ack - self.lastAck) * 2
+                        self.window_size += (ack - self.lastAck) * 2
                         self.seq = ack + 1
-                        # self.window_print = self.window_size
+                        self.window_print = self.window_size
+                    self.lastAck = ack
+                    self.duplicates = 0
+                else:
+                    with self.lock:
+                        self.window_size += 1
+                        self.seq = ack + 1
+                        self.window_print = self.window_size
                     self.lastAck = ack
                     self.duplicates = 0
                     
@@ -50,8 +57,8 @@ class sendfile:
                     print("DUPLICATES")
                     with self.lock:
                         self.seq = self.lastAck
-                        # self.window_size = self.window_size // 2 if self.window_size > 1 else 1
-                        # self.window_print = self.window_size
+                        self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                        self.window_print = self.window_size
                     self.lastAck = self.lastAck-1
                     self.duplicates = 0
                 
@@ -60,14 +67,14 @@ class sendfile:
                 print(f'[-] Timeout')
                 with self.lock:
                     self.seq = self.seq - 1 if self.seq > 1 else 1
-                    # self.window_print = self.window_size
+                    self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                    self.window_print = self.window_size
                     
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
         print(f'\t[+] Sent : FIN to {addr}')
         self.window_size = 0
         self.transfer = False
-        print(datetime.datetime.now().timestamp() - start, self.window_print)
         with open('time_window.txt', 'w') as f:
             for time, window_size in time_window:
                 f.write(f'{time} {window_size}\n') 
@@ -86,20 +93,20 @@ class sendfile:
         th1.start()
         # start timer
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
-        #while self.transfer:
-        while self.window_size > 0:
-            with self.lock:
-                f.seek((self.seq-1)*self.buffersize)
-                data = f.read(self.buffersize)
-            if(data):
-                self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
-                self.s.settimeout(round(self.s.gettimeout(), 4))
-                print(
-                    f'\t[+] Sent : {str(self.seq).zfill(6)} to {addr} with window size {self.window_size}')
+        while self.transfer:
+            while self.window_size > 0:
                 with self.lock:
-                    self.seq += 1
-                # with self.lock:
-                #     self.window_size -= 1
+                    f.seek((self.seq-1)*self.buffersize)
+                    data = f.read(self.buffersize)
+                if(data):
+                    self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
+                    self.s.settimeout(round(self.s.gettimeout(), 4))
+                    print(
+                        f'\t[+] Sent : {str(self.seq).zfill(6)} to {addr} with window size {self.window_size}')
+                    with self.lock:
+                        self.seq += 1
+                    with self.lock:
+                        self.window_size -= 1
         # print time_window into a file
         th1.join()
         print("coucou g join")

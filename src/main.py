@@ -6,7 +6,6 @@ from threeway import *
 from utils import *
 from sendfile import *
 
-port : int
 three_way_socket : socket.socket
 comm_socket : socket.socket
 
