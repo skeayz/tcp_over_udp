@@ -5,7 +5,7 @@ from utils import *
 
 class threeway:
 
-    def __init__(self, socket : socket.socket, current_port : int):
+    def __init__(self, socket, current_port):
         self.s = socket
         self.current_port = current_port
 
