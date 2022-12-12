@@ -6,9 +6,6 @@ from threeway import *
 from utils import *
 from sendfile import *
 
-three_way_socket : socket.socket
-comm_socket : socket.socket
-
 if __name__ == '__main__':
     if(len(sys.argv) != 2):
         print(f'{"Usage: python main.py <portNumber>"}')
