@@ -70,7 +70,7 @@ class sendfile:
         print(datetime.datetime.now().timestamp() - start, self.window_print)
         with open('time_window.txt', 'w') as f:
             for time, window_size in time_window:
-                f.write(f'{time} {window_size}\n') 
+                f.write(str(time) + ' ' + str(window_size) + '\n') 
 
     def run(self):
         print(" Start of the file transfer ")
