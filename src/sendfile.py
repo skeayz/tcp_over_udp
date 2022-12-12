@@ -25,9 +25,10 @@ class sendfile:
 
     def receive(self):
         ack = -1
+        print(self.final_ack)
         time_window = []
         start = datetime.datetime.now()
-        while self.lastAck >= self.final_ack:
+        while True:
             # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
@@ -36,6 +37,7 @@ class sendfile:
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
                 if(ack > self.lastAck and self.threshold > self.window_size):
+                    print(self.final_ack)
                     with self.lock:
                         self.window_size += (ack - self.lastAck) * 2
                         self.seq = ack + 1
