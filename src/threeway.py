@@ -5,11 +5,11 @@ from utils import *
 
 class threeway:
 
-    def __init__(self, socket : socket.socket, current_port : int):
+    def __init__(self, socket, current_port):
         self.s = socket
         self.current_port = current_port
 
-    def run(self) -> socket.socket:
+    def run(self):
     
         data, addr  = self.s.recvfrom(1024)
         if(custom_decode(data) != 'SYN'):
@@ -26,7 +26,7 @@ class threeway:
             print(e)
             exit(1)
         #Create the Syn-ACk message including the new port
-        synack = f"SYN-ACK{str(new_port).zfill(4)}"
+        synack = "SYN-ACK" + str(new_port).zfill(4)
         
         initial_time = time.time()
         self.s.sendto(custom_encode(synack), addr)
