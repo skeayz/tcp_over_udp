@@ -27,7 +27,7 @@ if __name__ == '__main__':
         exit(1)
     
     while True:
-        print(f'{" Creation of the socket ":=^80}\n')
+        print(" Creation of the socket ")
         thr = threeway(three_way_socket, port)
         comm_socket, rtt = thr.run()
         sndf = sendfile(comm_socket, rtt)
