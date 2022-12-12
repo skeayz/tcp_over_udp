@@ -26,7 +26,7 @@ class threeway:
             print(e)
             exit(1)
         #Create the Syn-ACk message including the new port
-        synack = f"SYN-ACK{str(new_port).zfill(4)}"
+        synack = "SYN-ACK" + str(new_port).zfill(4)
         
         initial_time = time.time()
         self.s.sendto(custom_encode(synack), addr)
