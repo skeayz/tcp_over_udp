@@ -16,7 +16,7 @@ if __name__ == '__main__':
         print("Port number must be between 1024 and 65535")
         exit(1)
     
-    print(f'{" Start of the TCP over UDP server on port  %d "%port:=^80}\n')
+    print(" Start of the TCP over UDP server on port: ", port)
 
     try:
         three_way_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,7 +27,7 @@ if __name__ == '__main__':
         exit(1)
     
     while True:
-        print(f'{" Creation of the socket ":=^80}\n')
+        print(" Creation of the socket ")
         thr = threeway(three_way_socket, port)
         comm_socket, rtt = thr.run()
         sndf = sendfile(comm_socket, rtt)
