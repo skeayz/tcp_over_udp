@@ -8,7 +8,7 @@ class sendfile:
 
     lastAck = 0
     duplicates = -1
-    window_size = 30
+    window_size = 1
     window_print = 1
     seq = 1
     transfer = True
@@ -27,7 +27,7 @@ class sendfile:
         ack = -1
         time_window = []
         start = datetime.datetime.now()
-        while self.lastAck >= self.final_ack:
+        while ack >= self.final_ack:
             # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
