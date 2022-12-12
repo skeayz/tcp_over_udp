@@ -61,6 +61,8 @@ class sendfile:
                 with self.lock:
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     # self.window_print = self.window_size
+                print(self.lastAck)
+                print(self.final_ack)
                     
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
