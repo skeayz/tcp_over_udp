@@ -26,10 +26,10 @@ class sendfile:
     def receive(self):
         ack = -1
         time_window = []
-        start = datetime.datetime.now().timestamp()
+        # start = datetime.datetime.now().timestamp()
         while ack != self.final_ack:
             # flush the buffer
-            time_window.append((datetime.datetime.now().timestamp() - start, self.window_print))
+            # time_window.append((datetime.datetime.now().timestamp() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1024)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
@@ -67,10 +67,10 @@ class sendfile:
         print('[+] Sent : FIN to' + str(addr))
         self.window_size = 0
         self.transfer = False
-        print(datetime.datetime.now().timestamp() - start, self.window_print)
-        with open('time_window.txt', 'w') as f:
-            for time, window_size in time_window:
-                f.write(str(time) + ' ' + str(window_size) + '\n') 
+        # print(datetime.datetime.now().timestamp() - start, self.window_print)
+        # with open('time_window.txt', 'w') as f:
+        #     for time, window_size in time_window:
+        #         f.write(str(time) + ' ' + str(window_size) + '\n') 
 
     def run(self):
         print(" Start of the file transfer ")
