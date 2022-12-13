@@ -37,7 +37,6 @@ class sendfile:
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
                 if(ack > self.lastAck and self.ss_tresh > self.window_size):
-                    print(self.final_ack)
                     with self.lock:
                         self.window_size += (ack - self.lastAck) * 2
                         self.seq = ack + 1
