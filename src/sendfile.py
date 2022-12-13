@@ -110,7 +110,8 @@ class sendfile:
                     with self.lock:
                         self.seq += 1
                     with self.lock:
-                        self.window_size -= 1
+                        if(self.window_size > 2):
+                            self.window_size -= 1
         # print time_window into a file
         th1.join()
         exit(0)   
