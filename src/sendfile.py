@@ -58,9 +58,9 @@ class sendfile:
                     print("DUPLICATES")
                     with self.lock:
                         self.seq = self.lastAck
-                        # self.window_size = self.window_size // 2 if self.window_size > 1 else 1
-                        # self.window_print = self.window_size
-                    # self.lastAck = self.lastAck-1
+                        self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                        self.window_print = self.window_size
+                    self.lastAck = self.lastAck-1
                     self.duplicates = 0
                 
                 
@@ -72,8 +72,6 @@ class sendfile:
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                     self.window_print = self.window_size
-                print(self.lastAck)
-                print(self.final_ack)
                     
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
@@ -114,5 +112,4 @@ class sendfile:
                         self.window_size -= 1
         # print time_window into a file
         th1.join()
-        print("NICOLA FUME DES join                                         et je me tape sa go")
         exit(0)   
