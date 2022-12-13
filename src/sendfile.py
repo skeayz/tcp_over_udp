@@ -26,7 +26,6 @@ class sendfile:
 
     def receive(self):
         ack = -1
-        print(self.final_ack)
         time_window = []
         start = datetime.datetime.now()
         while ack != self.final_ack:
@@ -61,7 +60,7 @@ class sendfile:
                         self.seq = self.lastAck
                         self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                         self.window_print = self.window_size
-                    self.lastAck = self.lastAck-1
+                    #self.lastAck = self.lastAck-1
                     self.duplicates = 0
                 
                 
@@ -69,7 +68,6 @@ class sendfile:
                 print('[-] Timeout')
                 with self.lock:
                     self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
-                    print('[-]' + str(self.ss_tresh))
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                     self.window_print = self.window_size
