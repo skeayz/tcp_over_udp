@@ -53,8 +53,13 @@ class sendfile:
 
                 if (ack == self.lastAck and self.duplicates < 2):
                     self.duplicates += 1
-                    print("DUPLICATES INCREMENTATION FOR ACK " + str(self.lastAck))
-                    print("DUPLICATES = " + str(self.duplicates))
+                if(self.duplicates >= 2):
+                    print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
+                    with self.lock:
+                        self.seq = self.lastAck + 1
+                        self.window_size = 2
+                        self.window_print = self.window_size
+                    self.duplicates = 0
 
                 
                 
@@ -93,13 +98,6 @@ class sendfile:
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
         while self.transfer:
             while self.window_size > 0:
-                if(self.duplicates >= 2):
-                    print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
-                    with self.lock:
-                        self.seq = self.lastAck + 1
-                        self.window_size = 2
-                        self.window_print = self.window_size
-                    self.duplicates = 0
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
                     data = f.read(self.buffersize)
