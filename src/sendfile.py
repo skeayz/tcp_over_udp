@@ -56,8 +56,10 @@ class sendfile:
                 elif (ack == self.lastAck and self.duplicates >= 2):
                     print("DUPLICATES ACK FOR ACK " + str(ack))
                     with self.lock:
+                        old_size = self.window_size
+                        self.window_size = 0
                         self.seq = self.lastAck + 1
-                        self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                        self.window_size = old_size // 2 if old_size > 1 else 1
                         self.window_print = self.window_size
                     self.duplicates = 0
                 
