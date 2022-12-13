@@ -69,7 +69,7 @@ class sendfile:
                 print('[-] Timeout')
                 with self.lock:
                     self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 1 else 1
-                    print('[-]' + self.ss_tresh)
+                    print('[-]' + str(self.ss_tresh))
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                     self.window_print = self.window_size
