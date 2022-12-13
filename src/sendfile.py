@@ -51,7 +51,7 @@ class sendfile:
                     self.lastAck = ack
                     self.duplicates = 0
 
-                if (ack == self.lastAck and self.duplicates < 2):
+                if (ack == self.lastAck and self.duplicates < 3):
                     self.duplicates += 1
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
