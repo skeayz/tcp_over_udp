@@ -59,7 +59,6 @@ class sendfile:
                         self.seq = self.lastAck + 1
                         self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                         self.window_print = self.window_size
-                    self.duplicates = 0
                 
                 
             except socket.error as err:
@@ -105,8 +104,7 @@ class sendfile:
                     self.s.settimeout(round(self.s.gettimeout(), 4))
                     print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
                     with self.lock:
-                        if(self.duplicates < 2):
-                            self.seq += 1
+                        self.seq += 1
                     with self.lock:
                         self.window_size -= 1
         # print time_window into a file
