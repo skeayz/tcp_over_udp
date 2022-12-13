@@ -17,6 +17,7 @@ class sendfile:
     lock = threading.Lock()
     buffersize = 1494
     threshold = 30
+    ss_tresh = -1
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -67,6 +68,8 @@ class sendfile:
             except socket.error as err:
                 print('[-] Timeout')
                 with self.lock:
+                    self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 1 else 1
+                    print('[-]' + self.ss_tresh)
                     self.seq = self.seq - 1 if self.seq > 1 else 1
                     self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                     self.window_print = self.window_size
