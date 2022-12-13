@@ -53,6 +53,8 @@ class sendfile:
 
                 if (ack == self.lastAck and self.duplicates < 2):
                     self.duplicates += 1
+                    print("DUPLICATES INCREMENTATION FOR ACK " + str(self.lastAck))
+                    print("DUPLICATES = " + str(self.duplicates))
 
                 
                 
