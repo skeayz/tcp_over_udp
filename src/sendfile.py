@@ -62,7 +62,7 @@ class sendfile:
                     with self.lock:
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
                         self.seq = self.seq - 1 if self.seq > 1 else 1
-                        self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                        self.window_size = 1
                         self.window_print = self.window_size
                     
         ## When we receive the final ack we send end to the client
@@ -95,7 +95,7 @@ class sendfile:
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
                         self.seq = self.lastAck + 1
-                        self.window_size = self.window_size // 2 if self.window_size > 1 else 1
+                        self.window_size = 1
                         self.window_print = self.window_size
                     self.duplicates = 0
                 with self.lock:
