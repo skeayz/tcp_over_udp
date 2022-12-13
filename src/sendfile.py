@@ -16,7 +16,7 @@ class sendfile:
     rtt = 0.0
     lock = threading.Lock()
     buffersize = 1494
-    ss_tresh = -1
+    ss_tresh = 10000000
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -46,7 +46,7 @@ class sendfile:
                     self.duplicates = 0
                 if(ack > self.lastAck and self.ss_tresh <= self.window_size):
                     with self.lock:
-                        self.window_size = (self.window_size + (ack - self.lastAck) * 2/self.window_size)
+                        self.window_size = (self.window_size + 1/self.window_size)
                         self.seq = ack + 1
                         self.window_print = self.window_size
                     self.lastAck = ack
