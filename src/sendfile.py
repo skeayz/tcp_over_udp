@@ -105,7 +105,8 @@ class sendfile:
                     self.s.settimeout(round(self.s.gettimeout(), 4))
                     print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
                     with self.lock:
-                        self.seq += 1
+                        if(self.duplicates < 2):
+                            self.seq += 1
                     with self.lock:
                         self.window_size -= 1
         # print time_window into a file
