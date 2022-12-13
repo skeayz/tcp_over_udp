@@ -53,6 +53,7 @@ class sendfile:
 
                 if (ack == self.lastAck and self.duplicates < 2):
                     if(self.seq == self.lastAck + 1):
+                        self.window_size += 1
                         continue
                     self.duplicates += 1
                 if(self.duplicates >= 2):
@@ -110,8 +111,7 @@ class sendfile:
                     with self.lock:
                         self.seq += 1
                     with self.lock:
-                        if(self.window_size > 2):
-                            self.window_size -= 1
+                        self.window_size -= 1
         # print time_window into a file
         th1.join()
         exit(0)   
