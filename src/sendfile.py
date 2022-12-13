@@ -9,6 +9,7 @@ class sendfile:
 
     lastAck = 0
     duplicates = -1
+    duplicate_ack_number = 0
     window_size = 1
     window_print = 1
     seq = 1
@@ -52,9 +53,8 @@ class sendfile:
                     self.duplicates = 0
 
                 if (ack == self.lastAck and self.duplicates < 2):
-                    self.duplicates += 1
-
-                
+                    if(self.duplicate_ack_number != ack):
+                        self.duplicates += 1
                 
             except socket.error as err:
                 if(self.window_size >= 1):
@@ -97,6 +97,7 @@ class sendfile:
                         self.seq = self.lastAck + 1
                         self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                         self.window_print = self.window_size
+                        self.duplicate_ack_number = self.lastAck
                     self.duplicates = 0
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
