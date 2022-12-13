@@ -39,14 +39,14 @@ class sendfile:
                 if(ack > self.lastAck and self.ss_tresh > self.window_size):
                     with self.lock:
                         self.window_size += (ack - self.lastAck) * 2
-                        #self.seq = ack + 1
+                        self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
                     self.duplicates = 0
                 if(ack > self.lastAck and self.ss_tresh <= self.window_size):
                     with self.lock:
                         self.window_size = (self.window_size + 1/self.window_size)
-                        #self.seq = ack + 1
+                        self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
                     self.duplicates = 0
