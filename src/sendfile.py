@@ -59,6 +59,7 @@ class sendfile:
                         self.seq = self.lastAck + 1
                         self.window_size = self.window_size // 2 if self.window_size > 1 else 1
                         self.window_print = self.window_size
+                    self.duplicates = 0
                 
                 
             except socket.error as err:
