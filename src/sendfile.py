@@ -114,7 +114,6 @@ class sendfile:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
                         self.seq += 1
-                        self.window_size -= 1 if self.window_size > 1 else 0    
                 data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
