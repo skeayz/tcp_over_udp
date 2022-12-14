@@ -38,6 +38,7 @@ class sendfile:
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
                 if(self.duplicate_mode and ack == self.lastAck):
+                    self.window_size += 1
                     continue
                 elif(self.duplicate_mode and ack > self.lastAck):
                     self.duplicate_mode = False
