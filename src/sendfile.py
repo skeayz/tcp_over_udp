@@ -1,6 +1,7 @@
 import socket
 import math
 from utils import *
+from time import sleep
 import threading
 import datetime
 import os
@@ -101,6 +102,7 @@ class sendfile:
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
         while self.transfer:
             while self.window_size > 0:
+                sleep(self.rtt)
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
                     data = f.read(self.buffersize)
