@@ -18,8 +18,6 @@ class sendfile:
     lock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
-    
-    duplicate_mode = False
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -38,9 +36,8 @@ class sendfile:
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
-                if(self.duplicate_mode and ack > self.lastAck):
-                    with self.lock:
-                        self.duplicate_mode = False
+                if(ack > self.lastAck):
+                    self.duplicates = 0
                 
                 if(ack >= self.lastAck and self.ss_tresh > self.window_size):
                     with self.lock:
@@ -55,13 +52,12 @@ class sendfile:
                         self.window_print = self.window_size
                     self.lastAck = ack
 
-                if (ack == self.lastAck and self.duplicates < 3 and not self.duplicate_mode):
+                if (ack == self.lastAck and self.duplicates < 3):
                     if(self.seq != self.lastAck +1):
                         self.duplicates += 1
-                if(self.duplicates >= 3 and not self.duplicate_mode):
+                if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
-                        self.duplicate_mode = True
                         self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.window_print = self.window_size
