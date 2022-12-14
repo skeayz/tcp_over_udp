@@ -65,6 +65,7 @@ class sendfile:
                         self.window_size = 1
                         self.window_print = self.window_size
                         self.last_duplicates = self.lastAck
+                        self.duplicates = 0
 
                 
                 
@@ -103,10 +104,9 @@ class sendfile:
             while self.window_size > 0:
                 sleep(self.rtt)
                 with self.lock:
-                    if(self.duplicates >= 3):
+                    if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-                        self.duplicates = 0
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
