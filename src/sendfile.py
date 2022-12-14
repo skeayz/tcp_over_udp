@@ -18,7 +18,6 @@ class sendfile:
     final_ack=0
     rtt = 0.0
     lock = threading.Lock()
-    socketLock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = 0
@@ -36,8 +35,7 @@ class sendfile:
         while ack != self.final_ack:
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
-                with self.socketLock:
-                    data, addr = self.s.recvfrom(1024)
+                data, addr = self.s.recvfrom(1024)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))            
                 if(ack == self.final_ack and self.duplicates == 0):
@@ -76,7 +74,7 @@ class sendfile:
                     print('[-] Timeout')
                     with self.lock:
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
-                        self.seq = self.seq - 1 if self.seq > 1 else 1
+                        self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.window_print = self.window_size
                     
@@ -118,8 +116,7 @@ class sendfile:
                         self.window_size -= 1 if self.window_size > 1 else 0    
                 data = f.read(self.buffersize)
                 if(data):
-                    with self.socketLock:
-                        self.s.sendto(sendseq.encode() + data, addr)
+                    self.s.sendto(sendseq.encode() + data, addr)
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
         th1.join()
         exit(0)   
