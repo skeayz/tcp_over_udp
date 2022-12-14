@@ -6,7 +6,7 @@ import threading
 import datetime
 import os
 
-MAX_WINDOW_SIZE = 50
+MAX_WINDOW_SIZE = 30
 class sendfile:
 
     lastAck = 0
