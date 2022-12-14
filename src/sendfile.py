@@ -9,7 +9,7 @@ import os
 MAX_WINDOW_SIZE = 50
 class sendfile:
 
-    lastAck = 0
+    lastAck = -1
     duplicates = -1
     window_size = 1
     window_print = 1
@@ -20,7 +20,7 @@ class sendfile:
     lock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
-    last_duplicates = 0
+    last_duplicates = -2
 
     def __init__(self, socket, rtt):
         self.s = socket
