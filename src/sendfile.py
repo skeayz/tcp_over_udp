@@ -21,6 +21,7 @@ class sendfile:
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = -2
+    resend = False
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -58,6 +59,7 @@ class sendfile:
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
+                        self.resend = False
                         self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.window_print = self.window_size
@@ -107,9 +109,10 @@ class sendfile:
             while self.window_size > 0:
                 sleep(self.rtt/2)
                 with self.lock:
-                    if(self.last_duplicates == self.lastAck):
+                    if(self.last_duplicates == self.lastAck and not self.resend):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
+                        self.resend = True
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
