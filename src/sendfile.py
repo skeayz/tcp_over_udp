@@ -37,6 +37,7 @@ class sendfile:
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))            
                 if(ack == self.final_ack):
+                    self.transfer = False
                     break
                 if(ack > self.lastAck or ack == self.last_duplicates):
                     self.duplicates = 0
@@ -80,8 +81,6 @@ class sendfile:
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
         print('[+] Sent : FIN to' + str(addr))
-        self.window_size = 0
-        self.transfer = False
         print(datetime.datetime.now() - start, self.window_print)
         with open('time_window.txt', 'w') as f:
            for time, window_size in time_window:
