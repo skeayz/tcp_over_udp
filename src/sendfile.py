@@ -104,8 +104,8 @@ class sendfile:
                 sleep(self.rtt)
                 with self.lock:
                     if(self.duplicates >= 3):
-                        f.seek((self.last_duplicates-1)*self.buffersize)
-                        sendseq = str(self.last_duplicates).zfill(6)
+                        f.seek((self.lastAck)*self.buffersize)
+                        sendseq = str(self.lastAck+1).zfill(6)
                         self.duplicates = 0
                     else:
                         f.seek((self.seq-1)*self.buffersize)
