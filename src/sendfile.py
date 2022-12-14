@@ -55,15 +55,16 @@ class sendfile:
                     self.lastAck = ack
 
                 if (ack == self.lastAck and ack != self.last_duplicates):
-                    self.duplicates += 1
-                    if(self.duplicates >= 3):
-                        print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
-                        with self.lock:
-                            self.seq = self.lastAck + 1
-                            self.window_size = 1
-                            self.window_print = self.window_size
-                            self.last_duplicates = self.lastAck
-                        self.duplicates = 0
+                    if(self.seq != self.lastAck +1):
+                        self.duplicates += 1
+                if(self.duplicates >= 3):
+                    print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
+                    with self.lock:
+                        self.seq = self.lastAck + 1
+                        self.window_size = 1
+                        self.window_print = self.window_size
+                        self.last_duplicates = self.lastAck
+                    self.duplicates = 0
 
                 
                 
