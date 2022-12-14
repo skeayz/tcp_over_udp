@@ -37,6 +37,7 @@ class sendfile:
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))
                 if(ack == self.last_duplicates):
+                    self.window_size = 1
                     continue
                 
                 if(ack > self.lastAck and self.ss_tresh > self.window_size):
