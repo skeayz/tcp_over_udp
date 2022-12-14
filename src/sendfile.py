@@ -32,7 +32,7 @@ class sendfile:
         ack = -1
         time_window = []
         start = datetime.datetime.now()
-        while True:
+        while ack != self.final_ack:
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1500)
