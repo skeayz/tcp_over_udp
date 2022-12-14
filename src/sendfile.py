@@ -30,6 +30,7 @@ class sendfile:
         time_window = []
         start = datetime.datetime.now()
         while True:
+            print(self.final_ack)
             # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
