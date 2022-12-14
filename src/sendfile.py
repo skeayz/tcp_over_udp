@@ -118,9 +118,9 @@ class sendfile:
                         self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
                         self.s.settimeout(round(self.s.gettimeout(), 4))
                         print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
-                        if(not self.duplicate_mode):
+                        if(not self.duplicate_mode or (self.duplicate_mode and self.seq >= self.lastAck + 1)):
                             self.seq += 1
-                        self.window_size -= 1
+                            self.window_size -= 1
         # print time_window into a file
         th1.join()
         exit(0)   
