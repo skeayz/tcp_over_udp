@@ -45,7 +45,8 @@ class sendfile:
                     if (self.ss_tresh > self.window_size):
                         window_incr = (ack - self.lastAck) * 2 if (ack - self.lastAck) * 2 > 0 else 2
                     else:
-                        window_incr = (self.window_size + 1/self.window_size)
+                        with self.lock:
+                            window_incr = (self.window_size + 1/self.window_size)
                     with self.lock:
                         self.window_size = (self.window_size + window_incr)%MAX_WINDOW_SIZE
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
