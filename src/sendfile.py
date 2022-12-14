@@ -38,33 +38,27 @@ class sendfile:
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
-                if(self.duplicate_mode and ack == self.lastAck):
-                    with self.lock:
-                        self.window_size += 1
-                    continue
-                elif(self.duplicate_mode and ack > self.lastAck):
+                if(self.duplicate_mode and ack > self.lastAck):
                     with self.lock:
                         self.duplicate_mode = False
                 
-                if(ack > self.lastAck and self.ss_tresh > self.window_size):
+                if(ack >= self.lastAck and self.ss_tresh > self.window_size):
                     with self.lock:
                         self.window_size += (ack - self.lastAck) * 2
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
-                    self.duplicates = 0
-                if(ack > self.lastAck and self.ss_tresh <= self.window_size):
+                if(ack >= self.lastAck and self.ss_tresh <= self.window_size):
                     with self.lock:
                         self.window_size = (self.window_size + 1/self.window_size)
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
-                    self.duplicates = 0
 
-                if (ack == self.lastAck and self.duplicates < 3):
+                if (ack == self.lastAck and self.duplicates < 3 and not self.duplicate_mode):
                     if(self.seq != self.lastAck +1):
                         self.duplicates += 1
-                if(self.duplicates >= 3):
+                if(self.duplicates >= 3 and not self.duplicate_mode):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
                         self.duplicate_mode = True
