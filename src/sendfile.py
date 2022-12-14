@@ -41,7 +41,6 @@ class sendfile:
                 if(self.duplicate_mode and ack == self.lastAck):
                     with self.lock:
                         self.window_size += 1
-                        self.seq += 1
                     continue
                 elif(self.duplicate_mode and ack > self.lastAck):
                     with self.lock:
@@ -115,14 +114,12 @@ class sendfile:
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
                     data = f.read(self.buffersize)
-                if(data):
-                    self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
-                    self.s.settimeout(round(self.s.gettimeout(), 4))
-                    print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
-                    with self.lock:
+                    if(data):
+                        self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
+                        self.s.settimeout(round(self.s.gettimeout(), 4))
+                        print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
                         if(not self.duplicate_mode):
                             self.seq += 1
-                    with self.lock:
                         self.window_size -= 1
         # print time_window into a file
         th1.join()
