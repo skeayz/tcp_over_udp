@@ -18,8 +18,6 @@ class sendfile:
     lock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
-    duplicate_mode = False
-    duplicate_ack = 0
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -59,8 +57,7 @@ class sendfile:
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
-                        self.duplicate_ack = self.lastAck
-                        self.duplicate_mode = True
+                        self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
                         self.window_print = self.window_size
@@ -103,28 +100,17 @@ class sendfile:
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
         while self.transfer:
             while self.window_size > 0:
-                if(self.duplicate_mode):
-                    print("DUPLICATE MODE FOR ACK " + str(self.duplicate_ack))
+                with self.lock:
+                    f.seek((self.seq-1)*self.buffersize)
+                    data = f.read(self.buffersize)
+                if(data):
+                    self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
+                    self.s.settimeout(round(self.s.gettimeout(), 4))
+                    print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
                     with self.lock:
-                        f.seek((self.duplicate_ack-1)*self.buffersize)
-                        data = f.read(self.buffersize)
-                    if(data):
-                        self.s.sendto(str(self.duplicate_ack).zfill(6).encode() + data, addr)
-                        self.s.settimeout(round(self.s.gettimeout(), 4))
-                        print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
-                    self.duplicate_mode = False
-                else :
+                        self.seq += 1
                     with self.lock:
-                        f.seek((self.seq-1)*self.buffersize)
-                        data = f.read(self.buffersize)
-                    if(data):
-                        self.s.sendto(str(self.seq).zfill(6).encode() + data, addr)
-                        self.s.settimeout(round(self.s.gettimeout(), 4))
-                        print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
-                        with self.lock:
-                            self.seq += 1
-                        with self.lock:
-                            self.window_size -= 1
+                        self.window_size -= 1
         # print time_window into a file
         th1.join()
         exit(0)   
