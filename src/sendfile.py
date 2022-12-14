@@ -71,6 +71,7 @@ class sendfile:
                         self.seq = self.lastAck + 1 if self.lastAck > 0 else 1
                         self.window_size = 1
                         self.window_print = self.window_size
+                        self.duplicates = 0
                     
         ## When we receive the final ack we send end to the client
         with self.lock:
