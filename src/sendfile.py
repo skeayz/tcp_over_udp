@@ -109,7 +109,7 @@ class sendfile:
                     sendseq = str(self.seq).zfill(6)
                     if(self.duplicates == 0):
                         self.seq += 1
-                        self.window_size -= 1     
+                        self.window_size -= 1 if self.window_size > 1 else 0    
                 data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
