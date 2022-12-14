@@ -103,12 +103,11 @@ class sendfile:
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
         while self.transfer:
             while self.window_size > 0:
-                sleep(self.rtt)
+                sleep(self.rtt/2)
                 with self.lock:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
