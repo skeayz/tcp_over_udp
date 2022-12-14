@@ -109,7 +109,7 @@ class sendfile:
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
                         self.handled_duplicates.append(self.lastAck)
-                        self.seq = self.lastAck + 1
+                        self.seq = self.lastAck + 2
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
