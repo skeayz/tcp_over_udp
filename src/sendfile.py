@@ -108,12 +108,6 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-                        while self.lastAck != self.last_duplicates:
-                            sleep(self.rtt/5)
-                            data = f.read(self.buffersize)
-                            if(data):
-                                self.s.sendto(sendseq.encode() + data, addr)
-                                print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
