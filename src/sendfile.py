@@ -106,14 +106,14 @@ class sendfile:
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
                     sendseq = str(self.seq).zfill(6)
+                    if(self.duplicates == 0):
+                        self.seq += 1
+                        self.window_size -= 1     
                 data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
-                with self.lock:
-                    if(self.duplicates == 0):
-                        self.seq += 1
-                        self.window_size -= 1         
+                        
         # print time_window into a file
         th1.join()
         exit(0)   
