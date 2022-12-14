@@ -30,7 +30,6 @@ class sendfile:
         time_window = []
         start = datetime.datetime.now()
         while True:
-            # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1024)
@@ -42,15 +41,13 @@ class sendfile:
                 if(ack > self.lastAck or ack == self.last_duplicates):
                     self.duplicates = 0
                 
-                if(ack >= self.lastAck and self.ss_tresh > self.window_size):
+                if(ack >= self.lastAck):
+                    if (self.ss_tresh > self.window_size):
+                        window_incr = (ack - self.lastAck) * 2
+                    else:
+                        window_incr = (self.window_size + 1/self.window_size)
                     with self.lock:
-                        self.window_size += (ack - self.lastAck) * 2
-                        self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
-                        self.window_print = self.window_size
-                    self.lastAck = ack
-                if(ack >= self.lastAck and self.ss_tresh <= self.window_size):
-                    with self.lock:
-                        self.window_size = (self.window_size + 1/self.window_size)
+                        self.window_size += window_incr
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
@@ -113,7 +110,5 @@ class sendfile:
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
-                        
-        # print time_window into a file
         th1.join()
         exit(0)   
