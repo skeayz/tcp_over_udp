@@ -110,7 +110,6 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-                        self.resend = True
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
