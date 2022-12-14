@@ -70,7 +70,6 @@ class sendfile:
                         self.duplicate_mode = True
                         self.seq = self.lastAck + 1
                         self.window_size = 1
-                        self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 10 else 10
                         self.window_print = self.window_size
                     self.duplicates = 0
 
