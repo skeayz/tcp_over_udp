@@ -109,7 +109,6 @@ class sendfile:
                 data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
-                    self.s.settimeout(round(self.s.gettimeout(), 4))
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
                 with self.lock:
                     if(self.duplicates == 0):
