@@ -19,7 +19,7 @@ class sendfile:
     rtt = 0.0
     lock = threading.Lock()
     buffersize = 1494
-    ss_tresh = 10000000
+    ss_tresh = 30
     last_duplicates = -2
 
     def __init__(self, socket, rtt):
@@ -40,12 +40,21 @@ class sendfile:
                 if(ack > self.lastAck or ack == self.last_duplicates):
                     self.duplicates = 0
                 
+                if(self.seq - self.lastAck > 30):
+                    with self.lock:
+                        self.seq = self.lastAck + 1
+                
+                if(ack < self.lastAck):
+                    with self.lock:
+                        self.window_size += 1
+                
                 if(ack >= self.lastAck):
                     if (self.ss_tresh > self.window_size):
                         window_incr = (ack - self.lastAck) * 2 if (ack - self.lastAck) * 2 > 0 else 2
                     else:
                         with self.lock:
                             window_incr = 1/self.window_size
+                            self.ss_tresh = (self.window_size + window_incr)
                     with self.lock:
                         self.window_size = (self.window_size + window_incr)
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
@@ -62,12 +71,13 @@ class sendfile:
                         self.window_size = 1
                         self.window_print = self.window_size
                         self.last_duplicates = self.lastAck
-                        self.duplicates = 0   
+                        self.duplicates = 0
+                           
             except socket.timeout:
                 if(self.window_size >= 1):
                     print('[-] Timeout')
                     with self.lock:
-                        self.ss_tresh = (self.seq - self.lastAck) // 2 
+                        self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 10 else 10
                         self.seq = self.lastAck + 1 if self.lastAck > 0 else 1
                         self.window_size = 1
                         self.window_print = self.window_size
