@@ -104,6 +104,7 @@ class sendfile:
         while self.transfer:
             while self.window_size > 0:
                 if(self.duplicate_mode):
+                    print("DUPLICATE MODE")
                     with self.lock:
                         f.seek((self.duplicate_ack-1)*self.buffersize)
                         data = f.read(self.buffersize)
