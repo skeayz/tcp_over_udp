@@ -111,7 +111,6 @@ class sendfile:
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
                     else:
-                        print(self.seq)
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
                         self.seq += 1
