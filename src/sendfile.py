@@ -47,6 +47,7 @@ class sendfile:
                     else:
                         with self.lock:
                             window_incr = (self.window_size + 1/self.window_size)
+                            print("window_incr", window_incr)
                     with self.lock:
                         self.window_size = (self.window_size + window_incr)
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
