@@ -23,7 +23,6 @@ class sendfile:
     def __init__(self, socket, rtt):
         self.s = socket
         self.rtt = round(rtt * 1.3, 4)
-        self.s.settimeout(round(rtt * 10, 4))
 
     def receive(self):
         ack = -1
