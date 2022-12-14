@@ -59,7 +59,7 @@ class sendfile:
                     with self.lock:
                         self.seq = self.lastAck + 1
                         self.window_size = 1
-                        self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
+                        self.ss_tresh = (self.seq - self.lastAck) // 2
                         self.window_print = self.window_size
                     self.duplicates = 0
 
