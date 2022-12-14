@@ -35,7 +35,7 @@ class sendfile:
         while ack != self.final_ack:
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
-                data, addr = self.s.recvfrom(1024)
+                data, addr = self.s.recvfrom(1500)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))            
                 if(ack == self.final_ack and self.duplicates == 0):
@@ -69,7 +69,7 @@ class sendfile:
                         self.window_print = self.window_size
                         self.last_duplicates = self.lastAck
                         self.duplicates = 0   
-            except socket.error as err:
+            except socket.timeout:
                 if(self.window_size >= 1):
                     print('[-] Timeout')
                     with self.lock:
