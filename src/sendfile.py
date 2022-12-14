@@ -5,6 +5,8 @@ from utils import *
 import threading
 import datetime
 import os
+
+MAX_WINDOW_SIZE = 50
 class sendfile:
 
     lastAck = 0
@@ -50,7 +52,7 @@ class sendfile:
                     else:
                         window_incr = (self.window_size + 1/self.window_size)
                     with self.lock:
-                        self.window_size += window_incr
+                        self.window_size = (self.window_size + window_incr)%MAX_WINDOW_SIZE
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
                         self.window_print = self.window_size
                     self.lastAck = ack
@@ -66,10 +68,7 @@ class sendfile:
                         self.window_size = 1
                         self.window_print = self.window_size
                         self.last_duplicates = self.lastAck
-                        self.duplicates = 0
-
-                
-                
+                        self.duplicates = 0   
             except socket.error as err:
                 if(self.window_size >= 1):
                     print('[-] Timeout')
