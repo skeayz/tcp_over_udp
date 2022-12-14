@@ -97,6 +97,7 @@ class sendfile:
             raise Exception("File not found")
         f.seek(0, os.SEEK_END)
         self.final_ack = math.ceil(f.tell()/self.buffersize)
+        self.send_over = False
         th1 = threading.Thread(target=self.receive)
         th1.setDaemon(True)
         th1.start()
