@@ -18,6 +18,7 @@ class sendfile:
     lock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
+    
     duplicate_mode = False
 
     def __init__(self, socket, rtt):
@@ -40,6 +41,7 @@ class sendfile:
                 if(self.duplicate_mode and ack == self.lastAck):
                     with self.lock:
                         self.window_size += 1
+                        self.seq += 1
                     continue
                 elif(self.duplicate_mode and ack > self.lastAck):
                     with self.lock:
