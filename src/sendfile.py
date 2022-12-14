@@ -21,7 +21,6 @@ class sendfile:
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = 0
-    handled_duplicates = []
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -62,16 +61,13 @@ class sendfile:
                         with self.lock:
                             self.duplicates += 1
                 if(self.duplicates >= 3):
-                    if(self.lastAck not in self.handled_duplicates):
-                        print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
-                        with self.lock:
-                            self.window_size = 1
-                            self.window_print = self.window_size
-                            self.last_duplicates = self.lastAck
-                            self.duplicates = 0   
-                    else:
-                        with self.lock:
-                            self.duplicates = 0
+                    print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
+                    with self.lock:
+                        #self.seq = self.lastAck + 1
+                        self.window_size = 1
+                        self.window_print = self.window_size
+                        self.last_duplicates = self.lastAck
+                        self.duplicates = 0   
             except socket.error as err:
                 if(self.window_size >= 1):
                     print('[-] Timeout')
@@ -110,7 +106,6 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-                        self.handled_duplicates.append(self.last_duplicates)
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
