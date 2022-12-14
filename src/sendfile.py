@@ -29,14 +29,15 @@ class sendfile:
         ack = -1
         time_window = []
         start = datetime.datetime.now()
-        while ack != self.final_ack:
+        while True:
             # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1024)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
-                ack = int(custom_decode(data).replace("ACK", ""))
-                
+                ack = int(custom_decode(data).replace("ACK", ""))            
+                if(ack == self.final_ack):
+                    break
                 if(ack > self.lastAck or ack == self.last_duplicates):
                     self.duplicates = 0
                 
