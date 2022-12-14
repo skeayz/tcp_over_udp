@@ -32,7 +32,7 @@ class sendfile:
         ack = -1
         time_window = []
         start = datetime.datetime.now()
-        while ack != self.final_ack:
+        while True:
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1500)
@@ -58,9 +58,8 @@ class sendfile:
                     self.lastAck = ack
 
                 if (ack == self.lastAck and ack != self.last_duplicates):
-                    if(self.seq != self.lastAck +1):
-                        with self.lock:
-                            self.duplicates += 1
+                    with self.lock:
+                        self.duplicates += 1
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
