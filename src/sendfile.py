@@ -6,7 +6,7 @@ import threading
 import datetime
 import os
 
-MAX_WINDOW_SIZE = 30
+MAX_WINDOW_SIZE = 50
 class sendfile:
 
     lastAck = 0
@@ -18,6 +18,7 @@ class sendfile:
     final_ack=0
     rtt = 0.0
     lock = threading.Lock()
+    socketLock = threading.Lock()
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = 0
@@ -35,7 +36,8 @@ class sendfile:
         while ack != self.final_ack:
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
-                data, addr = self.s.recvfrom(1024)
+                with self.socketLock:
+                    data, addr = self.s.recvfrom(1024)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
                 ack = int(custom_decode(data).replace("ACK", ""))            
                 if(ack == self.final_ack and self.duplicates == 0):
@@ -116,7 +118,8 @@ class sendfile:
                         self.window_size -= 1 if self.window_size > 1 else 0    
                 data = f.read(self.buffersize)
                 if(data):
-                    self.s.sendto(sendseq.encode() + data, addr)
+                    with self.socketLock:
+                        self.s.sendto(sendseq.encode() + data, addr)
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
         th1.join()
         exit(0)   
