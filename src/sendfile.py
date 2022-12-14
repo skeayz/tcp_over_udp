@@ -21,6 +21,7 @@ class sendfile:
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = 0
+    handled_duplicates = []
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -96,7 +97,7 @@ class sendfile:
         f.seek(0, os.SEEK_END)
         self.final_ack = math.ceil(f.tell()/self.buffersize)
         th1 = threading.Thread(target=self.receive)
-        th1.daemon = True
+        th1.setDaemon(True)
         th1.start()
         # start timer
         # Send the file the client expects data messages that start with a sequence number, in string format, over 6 bytes, buffer is 1024 bytess
@@ -107,6 +108,7 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
+                        self.handled_duplicates.append(self.lastAck)
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
