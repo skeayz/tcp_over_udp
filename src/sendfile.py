@@ -60,6 +60,7 @@ class sendfile:
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
                         self.duplicate_ack = self.lastAck
+                        self.duplicate_mode = True
                         self.window_size = 1
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
                         self.window_print = self.window_size
