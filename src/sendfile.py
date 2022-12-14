@@ -56,7 +56,8 @@ class sendfile:
 
                 if (ack == self.lastAck and ack != self.last_duplicates):
                     if(self.seq != self.lastAck +1):
-                        self.duplicates += 1
+                        with self.lock:
+                            self.duplicates += 1
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
                     with self.lock:
@@ -102,7 +103,7 @@ class sendfile:
             while self.window_size > 0:
                 sleep(self.rtt)
                 with self.lock:
-                    if(self.duplicates > 0):
+                    if(self.duplicates >= 3):
                         f.seek((self.last_duplicates-1)*self.buffersize)
                         sendseq = str(self.last_duplicates).zfill(6)
                         self.duplicates = 0
