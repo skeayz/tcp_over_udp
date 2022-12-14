@@ -34,7 +34,6 @@ class sendfile:
         start = datetime.datetime.now()
         while ack != self.final_ack:
             time_window.append((datetime.datetime.now() - start, self.window_print))
-            print("current timeout: ", self.s.gettimeout())
             try:
                 data, addr = self.s.recvfrom(1500)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
@@ -116,7 +115,7 @@ class sendfile:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
                         self.seq += 1
-                    self.s.settimeout(round((self.seq-self.lastAck)*self.rtt, 4))
+                    self.s.settimeout((self.seq-self.lastAck)*self.rtt)
                 data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
