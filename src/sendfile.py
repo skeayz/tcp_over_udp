@@ -94,7 +94,6 @@ class sendfile:
             f = open(custom_decode(data), 'rb')
         except FileNotFoundError:
             raise Exception("File not found")
-        f.seek(0, os.SEEK_END)
         self.final_ack = math.ceil(f.tell()/self.buffersize)
         th1 = threading.Thread(target=self.receive)
         th1.start()
@@ -105,8 +104,8 @@ class sendfile:
                 sleep(self.rtt)
                 with self.lock:
                     f.seek((self.seq-1)*self.buffersize)
-                    data = f.read(self.buffersize)
                     sendseq = str(self.seq).zfill(6)
+                data = f.read(self.buffersize)
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
                     self.s.settimeout(round(self.s.gettimeout(), 4))
