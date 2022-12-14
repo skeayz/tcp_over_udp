@@ -30,7 +30,6 @@ class sendfile:
         time_window = []
         start = datetime.datetime.now()
         while True:
-            print(self.final_ack)
             # flush the buffer
             time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
@@ -96,6 +95,7 @@ class sendfile:
             f = open(custom_decode(data), 'rb')
         except FileNotFoundError:
             raise Exception("File not found")
+        f.seek(0, os.SEEK_END)
         self.final_ack = math.ceil(f.tell()/self.buffersize)
         th1 = threading.Thread(target=self.receive)
         th1.start()
