@@ -38,10 +38,12 @@ class sendfile:
                 ack = int(custom_decode(data).replace("ACK", ""))
                 
                 if(self.duplicate_mode and ack == self.lastAck):
-                    self.window_size += 1
+                    with self.lock:
+                        self.window_size += 1
                     continue
                 elif(self.duplicate_mode and ack > self.lastAck):
-                    self.duplicate_mode = False
+                    with self.lock:
+                        self.duplicate_mode = False
                 
                 if(ack > self.lastAck and self.ss_tresh > self.window_size):
                     with self.lock:
@@ -63,8 +65,8 @@ class sendfile:
                         self.duplicates += 1
                 if(self.duplicates >= 3):
                     print("DUPLICATES ACK FOR ACK " + str(self.lastAck))
-                    self.duplicate_mode = True
                     with self.lock:
+                        self.duplicate_mode = True
                         self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 10 else 10
@@ -116,7 +118,8 @@ class sendfile:
                     self.s.settimeout(round(self.s.gettimeout(), 4))
                     print('\t[+] Sent : '+str(self.seq).zfill(6)+' to '+ str(addr) +' with window size '+str(self.window_size))
                     with self.lock:
-                        self.seq += 1
+                        if(not self.duplicate_mode):
+                            self.seq += 1
                     with self.lock:
                         self.window_size -= 1
         # print time_window into a file
