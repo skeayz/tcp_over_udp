@@ -74,7 +74,7 @@ class sendfile:
                     print('[-] Timeout')
                     with self.lock:
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
-                        self.seq = self.seq - 1 if self.seq > 1 else 1
+                        self.seq = self.lastAck + 1
                         self.window_size = 1
                         self.window_print = self.window_size
                     
@@ -108,8 +108,12 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
-                        self.handled_duplicates.append(self.lastAck)
-                        self.seq = self.lastAck + 1
+                        while self.lastAck != self.last_duplicates:
+                            sleep(self.rtt/5)
+                            data = f.read(self.buffersize)
+                            if(data):
+                                self.s.sendto(sendseq.encode() + data, addr)
+                                print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
