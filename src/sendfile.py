@@ -26,6 +26,8 @@ class sendfile:
     def __init__(self, socket, rtt):
         self.s = socket
         self.rtt = round(rtt * 1.3, 4)
+        self.s.settimeout(round(rtt *5, 4))
+        
 
     def receive(self):
         ack = -1
@@ -87,7 +89,12 @@ class sendfile:
 
     def run(self):
         print(" Start of the file transfer ")
-        data, addr = self.s.recvfrom(1024)
+        data = None
+        while not data:
+            try:
+                data, addr = self.s.recvfrom(1024)
+            except socket.timeout:
+                continue
         print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
         try:
             f = open(custom_decode(data), 'rb')
@@ -95,7 +102,6 @@ class sendfile:
             raise Exception("File not found")
         f.seek(0, os.SEEK_END)
         self.final_ack = math.ceil(f.tell()/self.buffersize)
-        self.s.settimeout(round(self.rtt *5, 4))
         th1 = threading.Thread(target=self.receive)
         th1.setDaemon(True)
         th1.start()
