@@ -21,7 +21,7 @@ class sendfile:
     buffersize = 1494
     ss_tresh = 10000000
     last_duplicates = 0
-
+    handled_duplicates = []
 
     def __init__(self, socket, rtt):
         self.s = socket
@@ -48,7 +48,7 @@ class sendfile:
                 
                 if(ack >= self.lastAck):
                     if (self.ss_tresh > self.window_size):
-                        window_incr = (ack - self.lastAck) * 2 if (ack - self.lastAck) * 2 >= 2 else 2
+                        window_incr = (ack - self.lastAck) * 2 if (ack - self.lastAck) * 2 > 0 else 2
                     else:
                         window_incr = (self.window_size + 1/self.window_size)
                     with self.lock:
@@ -108,6 +108,7 @@ class sendfile:
                     if(self.last_duplicates == self.lastAck):
                         f.seek((self.lastAck)*self.buffersize)
                         sendseq = str(self.lastAck+1).zfill(6)
+                        self.handled_duplicates.append(self.lastAck)
                     else:
                         f.seek((self.seq-1)*self.buffersize)
                         sendseq = str(self.seq).zfill(6)
