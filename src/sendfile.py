@@ -61,10 +61,11 @@ class sendfile:
                     with self.lock:
                         self.seq = self.lastAck + 1
                         self.window_size = 1
-                        self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
-                    self.window_print = self.window_size
-                    self.last_duplicates = self.lastAck
+                        self.window_print = self.window_size
+                        self.last_duplicates = self.lastAck
                     self.duplicates = 0
+
+                
                 
             except socket.error as err:
                 if(self.window_size >= 1):
@@ -73,7 +74,7 @@ class sendfile:
                         self.ss_tresh = (self.seq - self.lastAck) // 2 if (self.seq - self.lastAck) // 2 > 30 else 20
                         self.seq = self.seq - 1 if self.seq > 1 else 1
                         self.window_size = 1
-                    self.window_print = self.window_size
+                        self.window_print = self.window_size
                     
         ## When we receive the final ack we send end to the client
         self.s.sendto(custom_encode("FIN"), addr)
