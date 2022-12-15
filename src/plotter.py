@@ -3,14 +3,14 @@ import datetime
 
 if __name__ == "__main__":
     #Plot the graph from time_window.txt
-    with open('time_window.txt', 'r') as f:
+    with open('time_seq.txt', 'r') as f:
         rawFile = f.readlines()
         # time_window = [tuple(map(float, x.split())) for x in time_window]
         time_window = []
         for a in rawFile:
             a = a.split()
             a[0] = a[0].split(':')
-            a = (float(a[0][2]), a[1])
+            a = (float(a[0][2]), round(float(a[1]),2))
             time_window.append(a)
         
         # print(time_window)
