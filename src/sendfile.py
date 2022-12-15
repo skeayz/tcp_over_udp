@@ -40,9 +40,10 @@ class sendfile:
                 if(ack > self.lastAck or ack == self.last_duplicates):
                     self.duplicates = 0
                 
-                if(self.seq - self.lastAck > 30):
+                if(self.seq - self.lastAck > 40):
                     with self.lock:
                         self.seq = self.lastAck + 1
+                    continue
                 
                 if(ack < self.lastAck):
                     with self.lock:
