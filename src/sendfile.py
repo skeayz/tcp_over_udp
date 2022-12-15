@@ -30,9 +30,9 @@ class sendfile:
     def receive(self):
         ack = -1
         time_window = []
-        start = datetime.datetime.now()
+        start = datetime.now()
         while ack != self.final_ack:
-            time_window.append((datetime.datetime.now() - start, self.window_print))
+            time_window.append((datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1500)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
@@ -54,7 +54,7 @@ class sendfile:
                     else:
                         with self.lock:
                             window_incr = 1/self.window_size
-                            self.ss_tresh = (self.window_size + window_incr)
+                            self.ss_tresh = (self.window_size + window_incr) if (self.window_size + window_incr) < 20 else 20
                     with self.lock:
                         self.window_size = (self.window_size + window_incr) if (self.window_size + window_incr) < MAX_WINDOW_SIZE else MAX_WINDOW_SIZE
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
@@ -89,7 +89,7 @@ class sendfile:
             self.window_size = 0
         self.s.sendto(custom_encode("FIN"), addr)
         print('[+] Sent : FIN to' + str(addr))
-        print(datetime.datetime.now() - start, self.window_print)
+        print(datetime.now() - start, self.window_print)
         with open('time_window.txt', 'w') as f:
            for time, window_size in time_window:
                f.write(str(time) + ' ' + str(window_size) + '\n') 
