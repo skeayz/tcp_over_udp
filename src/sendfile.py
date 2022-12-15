@@ -132,5 +132,7 @@ class sendfile:
                 if(data):
                     self.s.sendto(sendseq.encode() + data, addr)
                     print('\t[+] Sent : '+sendseq+' to '+ str(addr) +' with window size '+str(self.window_size))
+                    with self.lock:
+                        self.window_size -= 1
         th1.join()
         exit(0)   
