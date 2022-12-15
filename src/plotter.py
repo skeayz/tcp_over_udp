@@ -4,8 +4,18 @@ import datetime
 if __name__ == "__main__":
     #Plot the graph from time_window.txt
     with open('time_window.txt', 'r') as f:
-        time_window = f.readlines()
-        time_window = [tuple(map(float, x.split())) for x in time_window]
+        rawFile = f.readlines()
+        # time_window = [tuple(map(float, x.split())) for x in time_window]
+        time_window = []
+        for a in rawFile:
+            a = a.split()
+            a[0] = a[0].split(':')
+            a = (float(a[0][2]), a[1])
+            time_window.append(a)
+        
+        print(time_window)
+        
+        # print(time_window)
         x = [t[0] for t in time_window]
         y = [t[1] for t in time_window]
         #plot only points
