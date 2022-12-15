@@ -30,9 +30,12 @@ class sendfile:
     def receive(self):
         ack = -1
         time_window = []
+        time_seq = []
         start = datetime.datetime.now()
         while ack != self.final_ack:
-            time_window.append((datetime.datetime.now() - start, self.window_print))
+            with self.lock:
+                time_window.append((datetime.datetime.now() - start, self.window_print))
+                time_seq.append((datetime.datetime.now() - start, self.seq))
             try:
                 data, addr = self.s.recvfrom(1500)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
@@ -83,6 +86,11 @@ class sendfile:
         with open('time_window.txt', 'w') as f:
            for time, window_size in time_window:
                f.write(str(time) + ' ' + str(window_size) + '\n') 
+               
+        with open('time_seq.txt', 'w') as f:
+            for time, seq in time_seq:
+                f.write(str(time) + ' ' + str(seq) + '\n') 
+                
 
     def run(self):
         print(" Start of the file transfer ")
