@@ -29,8 +29,10 @@ class sendfile:
 
     def receive(self):
         ack = -1
+        time_window = []
         start = datetime.datetime.now()
         while ack != self.final_ack:
+            time_window.append((datetime.datetime.now() - start, self.window_print))
             try:
                 data, addr = self.s.recvfrom(1500)
                 print("[+] Reiceved : "+ str(custom_decode(data)) +" from " + str(addr))
@@ -47,6 +49,7 @@ class sendfile:
                     with self.lock:
                         self.window_size = (self.window_size + window_incr)
                         self.seq = ack + 1 if ack + 1 >= self.seq else self.seq
+                        self.window_print = self.window_size
                     self.lastAck = ack
 
                 if (ack == self.lastAck and ack != self.last_duplicates):
@@ -57,6 +60,7 @@ class sendfile:
                     with self.lock:
                         self.seq = self.lastAck + 1
                         self.window_size = 1
+                        self.window_print = self.window_size
                         self.last_duplicates = self.lastAck
                         self.duplicates = 0   
             except socket.timeout:
@@ -66,6 +70,7 @@ class sendfile:
                         self.ss_tresh = (self.seq - self.lastAck) // 2 
                         self.seq = self.lastAck + 1 if self.lastAck > 0 else 1
                         self.window_size = 1
+                        self.window_print = self.window_size
                         self.duplicates = 0
                     
         ## When we receive the final ack we send end to the client
@@ -74,7 +79,10 @@ class sendfile:
             self.window_size = 0
         self.s.sendto(custom_encode("FIN"), addr)
         print('[+] Sent : FIN to' + str(addr))
-        print(datetime.datetime.now() - start)
+        print(datetime.datetime.now() - start, self.window_print)
+        with open('time_window.txt', 'w') as f:
+           for time, window_size in time_window:
+               f.write(str(time) + ' ' + str(window_size) + '\n') 
                 
 
     def run(self):
