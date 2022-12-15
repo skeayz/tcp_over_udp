@@ -3,7 +3,7 @@ import math
 from time import sleep
 from utils import *
 import threading
-from datetime import datetime
+import datetime
 import os
 
 MAX_WINDOW_SIZE = 40
