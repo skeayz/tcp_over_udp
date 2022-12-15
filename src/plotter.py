@@ -25,7 +25,7 @@ if __name__ == "__main__":
         plt.plot(x, y, linewidth=1, marker='o', markersize=1)
         # plt.xlim(0, 0.2)
         plt.xlabel('Time (s)')
-        plt.ylabel('Window size')
-        plt.title('Window size over time')
+        plt.ylabel('Sequence Number')
+        plt.title('Sequence number over time')
         plt.show()
         
